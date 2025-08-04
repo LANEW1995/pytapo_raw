@@ -79,7 +79,7 @@ class Downloader:
             segmentLength = self.endTime - self.startTime
             if self.fileName is None:
                 fileName = (
-                    self.outputDirectory + str(dateStart) + "-" + dateEnd + ".mp4"
+                    self.outputDirectory + str(dateStart) + "-" + dateEnd + ".ts" #raw mode
                 )
             else:
                 fileName = self.outputDirectory + self.fileName
@@ -170,7 +170,7 @@ class Downloader:
                                     "progress": 0,
                                     "total": 0,
                                 }
-                                await convert.save(fileName, segmentLength)
+                                await convert.save(fileName, segmentLength, method="raw")
                                 downloading = False
                                 break
                         # in case a finished stream notification is caught, save the chunks as is
@@ -196,7 +196,7 @@ class Downloader:
                                         "progress": 0,
                                         "total": 0,
                                     }
-                                    await convert.save(fileName, convert.getLength())
+                                    await convert.save(fileName, convert.getLength(), method="raw")
                                     downloading = False
                                     break
                             except JSONDecodeError:
@@ -227,7 +227,7 @@ class Downloader:
                                     "progress": 0,
                                     "total": 0,
                                 }
-                                await convert.save(fileName, segmentLength)
+                                await convert.save(fileName, segmentLength, method="raw")
                             else:
                                 currentAction = "Giving up"
                                 yield {

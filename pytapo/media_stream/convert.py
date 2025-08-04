@@ -5,6 +5,9 @@ import os
 import datetime
 import tempfile
 import aiofiles
+import shutil
+
+RAW_TS_MODE = True
 
 logger = logging.getLogger(__name__)
 logging.getLogger("libav").setLevel(logging.ERROR)
@@ -21,6 +24,15 @@ class Convert:
 
     # cuts and saves the video
     async def save(self, fileLocation, fileLength, method="ffmpeg"):
+        
+         # ---- RAW .ts output ---------------------------------
+        if method == "raw":
+            ts_path = fileLocation if fileLocation.endswith(".ts") else fileLocation + ".ts"
+            async with aiofiles.open(ts_path, "wb") as f:
+                await f.write(self.writer.getvalue())   # video+audio already in TS
+            return  # skip everything else (no ffmpeg, no temp files)
+        # ------------------------------------------------------
+        
         if method == "ffmpeg":
             tempVideoFileLocation = fileLocation + ".ts"
             async with aiofiles.open(tempVideoFileLocation, "wb") as file:
